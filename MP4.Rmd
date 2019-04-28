@@ -29,6 +29,15 @@ ORDER BY gender, age"
 age_gender
 ```
 
+To find which start station id to use:
+```{sql connection=db}
+SELECT start_station_id, count(*) AS n
+FROM citibike.trips
+GROUP BY start_station_id
+ORDER BY n DESC;
+```
+
+
 Will give the distances for the most popular start station (I sorted just that data in descedning order to find the right one) from greatest to least distance, and then shows the age, and all only for women
 ```{sql connection=db}
 SELECT gender, (t.duration / 60) AS duration_in_min, (2019 - t.birth_year) AS age
