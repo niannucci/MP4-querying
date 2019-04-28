@@ -28,3 +28,34 @@ ORDER BY gender, age"
 
 age_gender
 ```
+
+Will give the distances for the most popular start station (I sorted just that data in descedning order to find the right one) from greatest to least distance, and then shows the age, and all only for women
+```{sql connection=db}
+SELECT gender, (t.duration / 60) AS duration_in_min, (2019 - t.birth_year) AS age
+FROM trips AS t
+LEFT JOIN station_months 
+	ON station_months.station_id = t.start_station_id
+WHERE station_id = 519
+	AND gender = 2
+GROUP BY duration_in_min
+HAVING age < 100
+AND gender <> 0 
+ORDER BY duration_in_min DESC;
+```
+
+
+this is the same thing for men so we could compare the two
+```{sql connection=db}
+SELECT gender, (t.duration / 60) AS duration_in_min, (2019 - t.birth_year) AS age
+FROM trips AS t
+LEFT JOIN station_months 
+	ON station_months.station_id = t.start_station_id
+WHERE station_id = 519
+	AND gender = 1
+GROUP BY duration_in_min
+HAVING age < 100
+AND gender <> 0 
+ORDER BY duration_in_min, age;
+```
+
+
