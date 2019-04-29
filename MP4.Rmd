@@ -14,6 +14,8 @@ GitHub^[https://github.com/niannucci/MP4-querying]
 
 Ride sharing has been increasingly popular in recent years; but what about in metropolitan cities like New York City with constant heavy traffic? Or environmentalists looking to reduce their carbon footprint? Or, maybe you just want to get a little excersize in on your way to work. No matter your motivation, Citi Bike is a bike share system that has become popular as of late. [Citi Bikes](https://www.citibikenyc.com/about) are specifically labeled bikes locked into hundreds of stations around New York City; they can be returned to any station, and are available at all times. A corresponding app is used to unlock a bike, and pay for your ride. The distance of each ride is recorded, as well as which station it was taken from and returned to and the age of the user, allowing us to examine factors that are involved in the biking world.
 
+We looked at Citi Bike's data to see if there is any relationship between the duration that bikes are used for and the age of the user, and whether this relationship differs between men and women.
+
 ```{r message = FALSE, warning = FALSE}
 library(tidyverse)
 library(ggthemes)
@@ -27,10 +29,13 @@ db <- dbConnect(MySQL(),
 knitr::opts_chunk$set(connection = db, max.print = 20)
 ```
 
-While the Citi Bike station with the longest average duration also has the youngest average age of its users, the other stations quickly taper off and show no significant difference in average ride duration based on age.
+  We found the average ride duration and average age for each Citi Bike station, and ordered them from longest to shortest rides. The data in this graph reflects the top twenty data points; thus, the Citi Bike stations whose average ride durations were longest, and the corresponding average age of each user.  
+    
+  While the Citi Bike station with the longest average duration also has the youngest average age of its users, the other stations quickly taper off and show no significant difference in average ride duration based on age. Therefore, older age does not necessarily mean that users are taking shorter rides.
+  
 ```{r message = FALSE, warning = FALSE}
 women <- dbGetQuery(db, 
-"SELECT gender, AVG(t.duration / 60) AS avg_duration_in_min, AVG(2019 - t.birth_year) AS avg_age, name
+"SELECT AVG(t.duration / 60) AS avg_duration_in_min, AVG(2019 - t.birth_year) AS avg_age, name
 FROM trips AS t
 LEFT JOIN station_months 
 	ON station_months.station_id = t.start_station_id
@@ -74,7 +79,7 @@ women_table
 Similarly to women, the Citi Bike station with the longest average duration also has the youngest average age of its male users, and also show no significant difference in biking duration based on the factor of age.
 ```{r message = FALSE, warning = FALSE}
 men <- dbGetQuery(db, 
-"SELECT gender, AVG(t.duration / 60) AS avg_duration_in_min, AVG(2019 - t.birth_year) AS avg_age, name
+"SELECT AVG(t.duration / 60) AS avg_duration_in_min, AVG(2019 - t.birth_year) AS avg_age, name
 FROM trips AS t
 LEFT JOIN station_months 
 	ON station_months.station_id = t.start_station_id
@@ -87,7 +92,7 @@ LIMIT 0, 20"
 )
 ```
 
-```{r}
+```{r message = FALSE, warning = FALSE}
 men_table <- dbGetQuery(db, 
 "SELECT name, AVG(t.duration / 60) AS avg_duration_in_min, AVG(2019 - t.birth_year) AS avg_age
 FROM trips AS t
