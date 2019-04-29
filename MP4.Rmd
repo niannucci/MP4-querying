@@ -1,10 +1,19 @@
 ---
-title: "MP4"
-author: Natalia Iannucci and Hana Hirano
+title: "The New Way to Get Around NYC - But for Who?"
+author: By Natalia Iannucci and Hana Hirano
 output: 
   html_document:
     code_folding: hide
+    theme: journal
+    df_print: paged
 ---
+Date: `r format(Sys.Date(), "%B %e, %Y")`
+GitHub^[https://github.com/niannucci/MP4-querying] 
+
+![Source: Curbed New York](https://cdn.vox-cdn.com/thumbor/abPMvQOI6AYVBuDmggKP7FzMppE=/0x0:3464x2309/920x613/filters:focal(1455x878:2009x1432)/cdn.vox-cdn.com/uploads/chorus_image/image/61954281/citibike.0.jpg)
+
+Ride sharing has been increasingly popular in recent years; but what about in metropolitan cities like New York City with constant heavy traffic? Or environmentalists looking to reduce their carbon footprint? Or, maybe you just want to get a little excersize in on your way to work. No matter your motivation, Citi Bike is a bike share system that has become popular as of late. [Citi Bikes](https://www.citibikenyc.com/about) are specifically labeled bikes locked into hundreds of stations around New York City; they can be returned to any station, and are available at all times. A corresponding app is used to unlock a bike, and pay for your ride. The distance of each ride is recorded, as well as which station it was taken from and returned to and the age of the user, allowing us to examine factors that are involved in the biking world.
+
 ```{r message = FALSE, warning = FALSE}
 library(tidyverse)
 library(RMySQL)
@@ -19,7 +28,7 @@ knitr::opts_chunk$set(connection = db, max.print = 20)
 
 
 Will give the distances for the most popular start station (I sorted just that data in descedning order to find the right one) from greatest to least distance, and then shows the age, and all only for women
-```{r}
+```{r message = FALSE, warning = FALSE}
 women <- dbGetQuery(db, 
 "SELECT gender, AVG(t.duration / 60) AS avg_duration_in_min, AVG(2019 - t.birth_year) AS avg_age, name
 FROM trips AS t
@@ -31,11 +40,13 @@ GROUP BY name
 HAVING avg_age < 100
 ORDER BY avg_duration_in_min DESC"
 )
+
+
 ```
 
 
 this is the same thing for men so we could compare the two
-```{r}
+```{r message = FALSE, warning = FALSE}
 men <- dbGetQuery(db, 
 "SELECT gender, AVG(t.duration / 60) AS avg_duration_in_min, AVG(2019 - t.birth_year) AS avg_age, name
 FROM trips AS t
@@ -51,7 +62,7 @@ ORDER BY avg_duration_in_min DESC"
 
 
 this shows the relationship between their age and duration of their ride
-```{r}
+```{r message = FALSE, warning = FALSE}
 duration_age <- dbGetQuery(db, 
 "SELECT (t.duration / 60) AS duration_in_min, (2019 - t.birth_year) AS age
 FROM trips AS t
@@ -62,3 +73,4 @@ ORDER BY age"
 ```
 
 
+> Word count: `r wordcountaddin::word_count()`
