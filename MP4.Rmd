@@ -51,6 +51,8 @@ ggplot(women, aes(x = avg_age, y = avg_duration_in_min)) +
   ylab("Average Ride Duration (min)") +
   theme_solarized() +
   geom_smooth()
+
+women
 ```
 
 Similarly to women, the Citi Bike station with the longest average duration also has the youngest average age of its male users, and also show no significant difference in biking duration based on the factor of age.
@@ -77,6 +79,8 @@ ggplot(men, aes(x = avg_age, y = avg_duration_in_min)) +
   ylab("Average Ride Duration (min)") +
   theme_solarized() +
   geom_smooth()
+
+men
 ```
 
 We also studied how people's age would affect the length of the time they use citibike. Our hypothesis was that as the person's age increases, the duration of the ride will decrease considering the physical strength. However, surprisingly, the data shows that there is almost no relationship between the age and the duration of the ride.
@@ -93,7 +97,7 @@ ORDER BY age"
 ```{r message = FALSE, warning = FALSE}
 ggplot(duration_age, aes(x = age, y = avg_duration_in_min)) +
   geom_point(alpha = 0.8) +
-  ggtitle("The Relaionship Between Age and The Duration of Their Ride") +
+  ggtitle("The Relationship Between Age and The Duration of Their Ride") +
   xlab("Age") +
   ylab("Average Duration of The Ride (min)") +
   theme_solarized()
