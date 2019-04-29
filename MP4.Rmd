@@ -44,15 +44,13 @@ LIMIT 0, 20"
 ```
 
 ```{r message = FALSE, warning = FALSE}
-women_graph <- ggplot(women, aes(x = avg_age, y = avg_duration_in_min)) +
+ggplot(women, aes(x = avg_age, y = avg_duration_in_min)) +
   ggtitle("Top 20 Longest Average Station Rides for Women") +
   geom_point(alpha = 0.8) +
   xlab("Average Age of Citi Bike User") +
-  ylab("Average Ride Duration (Min)") +
+  ylab("Average Ride Duration (min)") +
   theme_solarized() +
   geom_smooth()
-
-women_graph
 ```
 
 Similarly to women, the Citi Bike station with the longest average duration also has the youngest average age of its male users, and also show no significant difference in biking duration based on the factor of age.
@@ -72,21 +70,19 @@ LIMIT 0, 20"
 ```
 
 ```{r message = FALSE, warning = FALSE}
-men_graph <- ggplot(men, aes(x = avg_age, y = avg_duration_in_min)) +
+ggplot(men, aes(x = avg_age, y = avg_duration_in_min)) +
   ggtitle("Top 20 Longest Average Station Rides for Men") +
   geom_point(alpha = 0.8) +
   xlab("Average Age of Citi Bike User") +
-  ylab("Average Ride Duration (Min)") +
+  ylab("Average Ride Duration (min)") +
   theme_solarized() +
   geom_smooth()
-
-men_graph
 ```
 
-this shows the relationship between their age and duration of their ride
+We also studied how people's age would affect the length of the time they use citibike. Our hypothesis was that as the person's age increases, the duration of the ride will decrease considering the physical strength. However, surprisingly, the data shows that there is almost no relationship between the age and the duration of the ride.
 ```{r message = FALSE, warning = FALSE}
 duration_age <- dbGetQuery(db, 
-"SELECT (t.duration / 60) AS duration_in_min, (2019 - t.birth_year) AS age
+"SELECT AVG(t.duration / 60) AS avg_duration_in_min, (2019 - t.birth_year) AS age
 FROM trips AS t
 WHERE t.birth_year > 1919
 GROUP BY age
@@ -94,5 +90,15 @@ ORDER BY age"
 )
 ```
 
+```{r message = FALSE, warning = FALSE}
+ggplot(duration_age, aes(x = age, y = avg_duration_in_min)) +
+  geom_point(alpha = 0.8) +
+  ggtitle("The Relaionship Between Age and The Duration of Their Ride") +
+  xlab("Age") +
+  ylab("Average Duration of The Ride (min)") +
+  theme_solarized()
+```
+
+This is an interesting trend. We expected that younger people would use the shared bike service for longer period of time since generally speaking, they should be physically strong. And we were able to see that the relationship between the age and the average duration of the ride seems to have a downward slope for the interval age 18 to around 30, meaning younger people ride londer than older people. Yet looking at the entire trend curve, for those of age 18 to 70, the trend line is almost horizontal. They seem to use the bike for approzimately 13 minutes. This horizontal trend was unexpected. Additionally, for people who are 75 or older, there seem to be two diverging trend lines, a very steep upward slope and a steep downward slope. The downward slope tells that as people age, they tend to use the shared bike servide for a shorter period of time. This makes sense as it is quite dangerous for elderly to ride bikes. Yet the upward sloping trend line was a surprise to us. This indicates that some elder people will ride shared bike for longer duration and as older they get, they use the service longer. 
 
 > Word count: `r wordcountaddin::word_count()`
