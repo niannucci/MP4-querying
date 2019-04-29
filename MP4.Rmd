@@ -1,5 +1,5 @@
 ---
-title: "The New Way to Get Around NYC - But for Who?"
+title: "The New Way to Get Around NYC - For Who?"
 author: By Natalia Iannucci and Hana Hirano
 output: 
   html_document:
@@ -7,7 +7,7 @@ output:
     theme: journal
     df_print: paged
 ---
-Date: `r format(Sys.Date(), "%B %e, %Y")`
+Date: `r format(Sys.Date(), "%B %e, %Y")`  
 GitHub^[https://github.com/niannucci/MP4-querying] 
 
 ![Source: Curbed New York](https://cdn.vox-cdn.com/thumbor/abPMvQOI6AYVBuDmggKP7FzMppE=/0x0:3464x2309/920x613/filters:focal(1455x878:2009x1432)/cdn.vox-cdn.com/uploads/chorus_image/image/61954281/citibike.0.jpg)
@@ -16,6 +16,7 @@ Ride sharing has been increasingly popular in recent years; but what about in me
 
 ```{r message = FALSE, warning = FALSE}
 library(tidyverse)
+library(ggthemes)
 library(RMySQL)
 library(DBI)
 db <- dbConnect(MySQL(), 
@@ -26,8 +27,7 @@ db <- dbConnect(MySQL(),
 knitr::opts_chunk$set(connection = db, max.print = 20)
 ```
 
-
-Will give the distances for the most popular start station (I sorted just that data in descedning order to find the right one) from greatest to least distance, and then shows the age, and all only for women
+While the Citi Bike station with the longest average duration also has the youngest average age of its users, the other stations quickly taper off and show no significant difference in average ride duration based on age.
 ```{r message = FALSE, warning = FALSE}
 women <- dbGetQuery(db, 
 "SELECT gender, AVG(t.duration / 60) AS avg_duration_in_min, AVG(2019 - t.birth_year) AS avg_age, name
@@ -38,14 +38,24 @@ WHERE gender = 2
 	AND start_time LIKE '2017-01%'
 GROUP BY name
 HAVING avg_age < 100
-ORDER BY avg_duration_in_min DESC"
+ORDER BY avg_duration_in_min DESC
+LIMIT 0, 20"
 )
-
-
 ```
 
+```{r message = FALSE, warning = FALSE}
+women_graph <- ggplot(women, aes(x = avg_age, y = avg_duration_in_min)) +
+  ggtitle("Top 20 Longest Average Station Rides for Women") +
+  geom_point(alpha = 0.8) +
+  xlab("Average Age of Citi Bike User") +
+  ylab("Average Ride Duration (Min)") +
+  theme_solarized() +
+  geom_smooth()
 
-this is the same thing for men so we could compare the two
+women_graph
+```
+
+Similarly to women, the Citi Bike station with the longest average duration also has the youngest average age of its male users, and also show no significant difference in biking duration based on the factor of age.
 ```{r message = FALSE, warning = FALSE}
 men <- dbGetQuery(db, 
 "SELECT gender, AVG(t.duration / 60) AS avg_duration_in_min, AVG(2019 - t.birth_year) AS avg_age, name
@@ -56,10 +66,22 @@ WHERE gender = 1
 	AND start_time LIKE '2017-01%'
 GROUP BY name
 HAVING avg_age < 100
-ORDER BY avg_duration_in_min DESC"
+ORDER BY avg_duration_in_min DESC
+LIMIT 0, 20"
 )
 ```
 
+```{r message = FALSE, warning = FALSE}
+men_graph <- ggplot(men, aes(x = avg_age, y = avg_duration_in_min)) +
+  ggtitle("Top 20 Longest Average Station Rides for Men") +
+  geom_point(alpha = 0.8) +
+  xlab("Average Age of Citi Bike User") +
+  ylab("Average Ride Duration (Min)") +
+  theme_solarized() +
+  geom_smooth()
+
+men_graph
+```
 
 this shows the relationship between their age and duration of their ride
 ```{r message = FALSE, warning = FALSE}
