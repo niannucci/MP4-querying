@@ -17,22 +17,11 @@ db <- dbConnect(MySQL(),
 knitr::opts_chunk$set(connection = db, max.print = 20)
 ```
 
-``{r}
-age_gender <- dbGetQuery(
-"SELECT gender, (t.duration / 60) AS duration_in_min, (2019 - t.birth_year) AS age
-FROM trips AS t
-HAVING age < 100
-AND gender <> 0 
-ORDER BY gender, age"
-)
-
-age_gender
-```
-
 
 Will give the distances for the most popular start station (I sorted just that data in descedning order to find the right one) from greatest to least distance, and then shows the age, and all only for women
-```{sql connection=db}
-SELECT gender, AVG(t.duration / 60) AS avg_duration_in_min, AVG(2019 - t.birth_year) AS avg_age, name
+```{r}
+women <- dbGetQuery(
+"SELECT gender, AVG(t.duration / 60) AS avg_duration_in_min, AVG(2019 - t.birth_year) AS avg_age, name
 FROM trips AS t
 LEFT JOIN station_months 
 	ON station_months.station_id = t.start_station_id
@@ -40,14 +29,15 @@ WHERE gender = 2
 	AND start_time LIKE '2017-01%'
 GROUP BY name
 HAVING avg_age < 100
-ORDER BY avg_duration_in_min DESC
-LIMIT 0, 20;
+ORDER BY avg_duration_in_min DESC"
+)
 ```
 
 
 this is the same thing for men so we could compare the two
-```{sql connection=db}
-SELECT gender, AVG(t.duration / 60) AS avg_duration_in_min, AVG(2019 - t.birth_year) AS avg_age, name
+```{r}
+men <- dbGetQuery(
+"SELECT gender, AVG(t.duration / 60) AS avg_duration_in_min, AVG(2019 - t.birth_year) AS avg_age, name
 FROM trips AS t
 LEFT JOIN station_months 
 	ON station_months.station_id = t.start_station_id
@@ -55,18 +45,20 @@ WHERE gender = 1
 	AND start_time LIKE '2017-01%'
 GROUP BY name
 HAVING avg_age < 100
-ORDER BY avg_duration_in_min DESC
-LIMIT 0, 20;
+ORDER BY avg_duration_in_min DESC"
+)
 ```
 
 
 this shows the relationship between their age and duration of their ride
-```{sql connection=db}
-SELECT (t.duration / 60) AS duration_in_min, (2019 - t.birth_year) AS age
+```{r}
+duration_age <- dbGetQuery(
+"SELECT (t.duration / 60) AS duration_in_min, (2019 - t.birth_year) AS age
 FROM trips AS t
 WHERE t.birth_year > 1919
 GROUP BY age
-ORDER BY age
+ORDER BY age"
+)
 ```
 
 
