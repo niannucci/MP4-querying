@@ -60,3 +60,13 @@ LIMIT 0, 20;
 ```
 
 
+this shows the relationship between their age and duration of their ride
+```{sql connection=db}
+SELECT (t.duration / 60) AS duration_in_min, (2019 - t.birth_year) AS age
+FROM trips AS t
+WHERE t.birth_year > 1919
+GROUP BY age
+ORDER BY age
+```
+
+
