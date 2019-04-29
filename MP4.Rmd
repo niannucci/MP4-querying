@@ -43,6 +43,22 @@ LIMIT 0, 20"
 )
 ```
 
+```{r}
+women_table <- dbGetQuery(db, 
+"SELECT name, AVG(t.duration / 60) AS avg_duration_in_min, AVG(2019 - t.birth_year) AS avg_age
+FROM trips AS t
+LEFT JOIN station_months 
+	ON station_months.station_id = t.start_station_id
+WHERE gender = 2
+	AND start_time LIKE '2017-01%'
+GROUP BY name
+HAVING avg_age < 100
+ORDER BY avg_duration_in_min DESC
+LIMIT 0, 20"
+)
+```
+
+
 ```{r message = FALSE, warning = FALSE}
 ggplot(women, aes(x = avg_age, y = avg_duration_in_min)) +
   ggtitle("Top 20 Longest Average Station Rides for Women") +
@@ -52,7 +68,7 @@ ggplot(women, aes(x = avg_age, y = avg_duration_in_min)) +
   theme_solarized() +
   geom_smooth()
 
-women
+women_table
 ```
 
 Similarly to women, the Citi Bike station with the longest average duration also has the youngest average age of its male users, and also show no significant difference in biking duration based on the factor of age.
@@ -70,6 +86,22 @@ ORDER BY avg_duration_in_min DESC
 LIMIT 0, 20"
 )
 ```
+
+```{r}
+men_table <- dbGetQuery(db, 
+"SELECT name, AVG(t.duration / 60) AS avg_duration_in_min, AVG(2019 - t.birth_year) AS avg_age
+FROM trips AS t
+LEFT JOIN station_months 
+	ON station_months.station_id = t.start_station_id
+WHERE gender = 1
+	AND start_time LIKE '2017-01%'
+GROUP BY name
+HAVING avg_age < 100
+ORDER BY avg_duration_in_min DESC
+LIMIT 0, 20"
+)
+```
+
 
 ```{r message = FALSE, warning = FALSE}
 ggplot(men, aes(x = avg_age, y = avg_duration_in_min)) +
