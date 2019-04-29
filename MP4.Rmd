@@ -20,7 +20,7 @@ knitr::opts_chunk$set(connection = db, max.print = 20)
 
 Will give the distances for the most popular start station (I sorted just that data in descedning order to find the right one) from greatest to least distance, and then shows the age, and all only for women
 ```{r}
-women <- dbGetQuery(
+women <- dbGetQuery(db, 
 "SELECT gender, AVG(t.duration / 60) AS avg_duration_in_min, AVG(2019 - t.birth_year) AS avg_age, name
 FROM trips AS t
 LEFT JOIN station_months 
@@ -36,7 +36,7 @@ ORDER BY avg_duration_in_min DESC"
 
 this is the same thing for men so we could compare the two
 ```{r}
-men <- dbGetQuery(
+men <- dbGetQuery(db, 
 "SELECT gender, AVG(t.duration / 60) AS avg_duration_in_min, AVG(2019 - t.birth_year) AS avg_age, name
 FROM trips AS t
 LEFT JOIN station_months 
@@ -52,7 +52,7 @@ ORDER BY avg_duration_in_min DESC"
 
 this shows the relationship between their age and duration of their ride
 ```{r}
-duration_age <- dbGetQuery(
+duration_age <- dbGetQuery(db, 
 "SELECT (t.duration / 60) AS duration_in_min, (2019 - t.birth_year) AS age
 FROM trips AS t
 WHERE t.birth_year > 1919
