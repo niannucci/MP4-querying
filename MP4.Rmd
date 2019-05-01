@@ -29,20 +29,6 @@ db <- dbConnect(MySQL(),
 knitr::opts_chunk$set(connection = db)
 ```
 
-```{r}
-dbGetQuery(db, 
-"SELECT name, COUNT(t.bike_id) AS N
-FROM trips AS t
-LEFT JOIN station_months 
-	ON station_months.station_id = t.start_station_id
-WHERE t.start_time LIKE '2017-01%'
-GROUP BY station_months.name
-ORDER BY N DESC
-LIMIT 0, 20;"
-)
-```
-
-
   We found the average ride duration and average age for each Citi Bike station, and ordered them from the longest to the shortest rides. The data in this graph reflects the top twenty data points for women; thus, the Citi Bike stations whose average ride durations were the longest, and the corresponding average age of each user.  
     
   While the Citi Bike station with the longest average duration also has the youngest average age of its users, the other stations quickly taper off and show no significant difference in average ride duration based on age. Therefore, older age does not necessarily mean that users are taking shorter rides.
@@ -90,7 +76,7 @@ ggplot(women, aes(x = avg_age, y = avg_duration_in_min)) +
 women_table
 ```
 
-Similarly to women, the Citi Bike station with the longest average duration also has the youngest average age of its male users, and also show no significant difference in biking duration based on the factor of age.
+Similarly to women, the Citi Bike station with the longest average duration also has the youngest average age of its male users, and also show no significant difference in biking duration based on the factor of age. 
 ```{r message = FALSE, warning = FALSE}
 men <- dbGetQuery(db, 
 "SELECT AVG(t.duration / 60) AS avg_duration_in_min, AVG(2019 - t.birth_year) AS avg_age, name
@@ -133,7 +119,7 @@ ggplot(men, aes(x = avg_age, y = avg_duration_in_min)) +
 
 men_table
 ```
-
+Comparing the results for women and men, although the trend lines are very similar that it is a downward sloping curve and the difference of average ride duration diminishes as the citibike user gets older, women's and men's data still have differences. For instance, the average duration ranges from 21 mintues to 4 hours and 38 minutes for women while the range for men is from 17 mintues to 3 hours and 27 minutes. Women use the citibike service for longer period of time than men.
 
 However, becuase we were looking at averages for ride duration and age for each indivudual station to try to find a relationship, we also wanted to see if the average duration based on age (not considering station) would show any relationship.
 
