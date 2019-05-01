@@ -26,7 +26,7 @@ db <- dbConnect(MySQL(),
                 user = "mth292", 
                 password = "RememberPi", 
                 dbname = "citibike")
-knitr::opts_chunk$set(connection = db, max.print = 20)
+knitr::opts_chunk$set(connection = db)
 ```
 
 ```{r}
