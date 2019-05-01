@@ -29,7 +29,21 @@ db <- dbConnect(MySQL(),
 knitr::opts_chunk$set(connection = db, max.print = 20)
 ```
 
-  We found the average ride duration and average age for each Citi Bike station, and ordered them from the longest to the shortest rides. The data in this graph reflects the top twenty data points; thus, the Citi Bike stations whose average ride durations were the longest, and the corresponding average age of each user.  
+```{r}
+dbGetQuery(db, 
+"SELECT name, COUNT(t.bike_id) AS N
+FROM trips AS t
+LEFT JOIN station_months 
+	ON station_months.station_id = t.start_station_id
+WHERE t.start_time LIKE '2017-01%'
+GROUP BY station_months.name
+ORDER BY N DESC
+LIMIT 0, 20;"
+)
+```
+
+
+  We found the average ride duration and average age for each Citi Bike station, and ordered them from the longest to the shortest rides. The data in this graph reflects the top twenty data points for women; thus, the Citi Bike stations whose average ride durations were the longest, and the corresponding average age of each user.  
     
   While the Citi Bike station with the longest average duration also has the youngest average age of its users, the other stations quickly taper off and show no significant difference in average ride duration based on age. Therefore, older age does not necessarily mean that users are taking shorter rides.
   
@@ -117,7 +131,7 @@ ggplot(men, aes(x = avg_age, y = avg_duration_in_min)) +
   theme_solarized_2() +
   geom_smooth()
 
-men
+men_table
 ```
 
 
