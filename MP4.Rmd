@@ -29,7 +29,7 @@ db <- dbConnect(MySQL(),
 knitr::opts_chunk$set(connection = db, max.print = 20)
 ```
 
-  We found the average ride duration and average age for each Citi Bike station, and ordered them from longest to shortest rides. The data in this graph reflects the top twenty data points; thus, the Citi Bike stations whose average ride durations were longest, and the corresponding average age of each user.  
+  We found the average ride duration and average age for each Citi Bike station, and ordered them from the longest to the shortest rides. The data in this graph reflects the top twenty data points; thus, the Citi Bike stations whose average ride durations were the longest, and the corresponding average age of each user.  
     
   While the Citi Bike station with the longest average duration also has the youngest average age of its users, the other stations quickly taper off and show no significant difference in average ride duration based on age. Therefore, older age does not necessarily mean that users are taking shorter rides.
   
@@ -70,7 +70,7 @@ ggplot(women, aes(x = avg_age, y = avg_duration_in_min)) +
   geom_point(alpha = 0.8) +
   xlab("Average Age of Citi Bike User") +
   ylab("Average Ride Duration (min)") +
-  theme_solarized() +
+  theme_solarized_2() +
   geom_smooth()
 
 women_table
@@ -114,7 +114,7 @@ ggplot(men, aes(x = avg_age, y = avg_duration_in_min)) +
   geom_point(alpha = 0.8) +
   xlab("Average Age of Citi Bike User") +
   ylab("Average Ride Duration (min)") +
-  theme_solarized() +
+  theme_solarized_2() +
   geom_smooth()
 
 men
@@ -129,7 +129,7 @@ On the other hand, for ages over 75, the average ride duration appears to have a
 
 ```{r message = FALSE, warning = FALSE}
 duration_age <- dbGetQuery(db, 
-"SELECT AVG(t.duration / 60) AS avg_duration_in_min, (2019 - t.birth_year) AS age
+"SELECT (2019 - t.birth_year) AS age, AVG(t.duration / 60) AS avg_duration_in_min 
 FROM trips AS t
 WHERE t.birth_year > 1919
 GROUP BY age
@@ -143,7 +143,7 @@ ggplot(duration_age, aes(x = age, y = avg_duration_in_min)) +
   ggtitle("The Relationship Between Age and The Duration of Their Ride") +
   xlab("Age") +
   ylab("Average Duration of The Ride (min)") +
-  theme_solarized()
+  theme_solarized_2()
 
 duration_age
 ```
